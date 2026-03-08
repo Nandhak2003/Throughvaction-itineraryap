@@ -1,0 +1,112 @@
+:root {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #111827;
+  background: #f3f4f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 320px;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.quotation-form h1 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 24px;
+}
+
+.form-note {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: #4b5563;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.field.full {
+  width: 100%;
+}
+
+.field span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field-help {
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+input,
+textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.download-panel h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.download-panel p {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: #4b5563;
+}
+
+.download-btn {
+  display: inline-block;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: none;
+  background: #111827;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

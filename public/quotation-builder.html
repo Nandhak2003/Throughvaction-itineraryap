@@ -1,0 +1,1521 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Quotation Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #edf3fb;
+      --bg-accent: rgba(37, 99, 235, 0.14);
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface-strong: rgba(255, 255, 255, 0.96);
+      --surface-soft: rgba(245, 249, 255, 0.88);
+      --line: #d8e2ef;
+      --line-strong: #bfd0e4;
+      --text: #102443;
+      --muted: #53667f;
+      --blue: #2563eb;
+      --blue-deep: #173f9d;
+      --blue-soft: #e8f0ff;
+      --indigo: #4f46e5;
+      --rose: #e11d48;
+      --rose-deep: #be123c;
+      --shadow: 0 28px 70px -42px rgba(16, 36, 67, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, var(--bg-accent), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.1), transparent 24%),
+        linear-gradient(180deg, #f6f9fd 0%, var(--bg) 100%);
+    }
+
+    .builder-shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: 0 18px 36px -28px rgba(23, 63, 157, 0.9);
+      color: var(--blue-deep);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue), #22c55e);
+      box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12);
+    }
+
+    .builder-title {
+      margin: 18px 0 10px;
+      max-width: 10ch;
+      font-size: clamp(2.4rem, 5vw, 4.15rem);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+    }
+
+    .builder-subtitle {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    .builder-form {
+      display: grid;
+      gap: 20px;
+      margin-top: 28px;
+    }
+
+    .builder-section {
+      position: relative;
+      border: 1px solid rgba(191, 208, 228, 0.74);
+      border-radius: 28px;
+      padding: 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 255, 0.88));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .builder-section::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.18), transparent 40%);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .section-kicker {
+      display: block;
+      margin-bottom: 8px;
+      color: #6f87a5;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 1.7rem;
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+
+    .field-span-2 {
+      grid-column: 1 / -1;
+    }
+
+    .field-label {
+      display: inline-block;
+      margin-bottom: 9px;
+      color: #183354;
+      font-size: 0.97rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .field-meta {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface-strong);
+      color: var(--text);
+      font: inherit;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    input,
+    select {
+      min-height: 54px;
+      padding: 0 16px;
+    }
+
+    textarea {
+      min-height: 140px;
+      padding: 14px 16px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #90a1b8;
+    }
+
+    input:hover,
+    select:hover,
+    textarea:hover {
+      border-color: var(--line-strong);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(37, 99, 235, 0.8);
+      box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 16px;
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), var(--indigo));
+      box-shadow: 0 18px 32px -24px rgba(37, 99, 235, 0.95);
+    }
+
+    .btn-secondary {
+      color: var(--blue-deep);
+      background: var(--blue-soft);
+      box-shadow: 0 16px 28px -24px rgba(23, 63, 157, 0.85);
+    }
+
+    .btn-ghost {
+      color: var(--blue-deep);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(37, 99, 235, 0.16);
+      box-shadow: 0 20px 36px -30px rgba(23, 63, 157, 0.95);
+      backdrop-filter: blur(14px);
+    }
+
+    .btn-reset-top {
+      min-width: 132px;
+      border-radius: 999px;
+      padding: 0 20px;
+    }
+
+    .btn-reset-top::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #fb7185, #f43f5e);
+      box-shadow: 0 0 0 5px rgba(244, 63, 94, 0.12);
+    }
+
+    .btn-danger {
+      color: #fff;
+      background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+      box-shadow: 0 16px 28px -24px rgba(225, 29, 72, 0.92);
+    }
+
+    .btn-sm {
+      min-height: 40px;
+      padding: 0 14px;
+      font-size: 0.86rem;
+    }
+
+    .builder-subcard {
+      border: 1px solid rgba(191, 208, 228, 0.72);
+      border-radius: 22px;
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(248, 251, 255, 0.94), rgba(239, 245, 253, 0.84));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+    }
+
+    .builder-subcard-tight {
+      padding: 16px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.04rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .stack-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .stack-row > :first-child {
+      flex: 1 1 auto;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .control-row > * {
+      flex: 1 1 auto;
+    }
+
+    .mini-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .image-upload-btn {
+      width: 100%;
+    }
+
+    .image-field {
+      display: grid;
+      gap: 12px;
+    }
+
+    .image-field-compact {
+      justify-items: start;
+    }
+
+    .image-preview-frame {
+      position: relative;
+      min-height: 160px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 245, 255, 0.92));
+      overflow: hidden;
+    }
+
+    .image-preview {
+      display: none;
+      width: 100%;
+      height: 100%;
+      min-height: 160px;
+      object-fit: cover;
+    }
+
+    .image-preview-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+      padding: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    .image-field-compact .image-preview-frame {
+      width: min(240px, 100%);
+      min-height: 110px;
+    }
+
+    .image-field-compact .image-preview,
+    .image-field-compact .image-preview-empty {
+      min-height: 110px;
+    }
+
+    .image-field-tiny {
+      justify-items: start;
+    }
+
+    .image-field-tiny .image-preview-frame {
+      width: min(180px, 100%);
+      min-height: 84px;
+    }
+
+    .image-field-tiny .image-preview,
+    .image-field-tiny .image-preview-empty {
+      min-height: 84px;
+    }
+
+    .image-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .image-strip-item {
+      flex: 0 0 auto;
+      width: 156px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(191, 208, 228, 0.72);
+      border-radius: 18px;
+      padding: 10px;
+      background:
+        linear-gradient(180deg, rgba(248, 251, 255, 0.94), rgba(239, 245, 253, 0.84));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+    }
+
+    .image-strip-item .image-preview-frame {
+      width: 100%;
+      min-height: 92px;
+    }
+
+    .image-strip-item .image-preview,
+    .image-strip-item .image-preview-empty {
+      min-height: 92px;
+    }
+
+    .image-strip-item .image-preview-empty {
+      font-size: 0.8rem;
+      padding: 12px;
+    }
+
+    .image-strip-remove {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .download-section {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background:
+        linear-gradient(135deg, rgba(17, 36, 74, 0.95), rgba(37, 99, 235, 0.92));
+      border-color: rgba(19, 41, 85, 0.24);
+    }
+
+    .download-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .download-copy {
+      color: rgba(255, 255, 255, 0.84);
+    }
+
+    .download-copy strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #fff;
+      font-size: 1.08rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .download-btn {
+      min-width: 180px;
+      color: var(--blue-deep);
+      background: #fff;
+      box-shadow: 0 18px 34px -26px rgba(8, 15, 31, 0.9);
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .gap-3 {
+      gap: 12px;
+    }
+
+    .items-end {
+      align-items: end;
+    }
+
+    .space-y-2 > * + * {
+      margin-top: 8px;
+    }
+
+    .space-y-3 > * + * {
+      margin-top: 12px;
+    }
+
+    .space-y-4 > * + * {
+      margin-top: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .md-grid-three {
+        grid-template-columns: minmax(0, 1fr) 180px auto;
+      }
+
+      .md-max-w-140 {
+        max-width: 140px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .builder-shell {
+        padding: 24px 16px 40px;
+      }
+
+      .hero-head,
+      .builder-title {
+        margin-top: 16px;
+      }
+
+      .hero-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .builder-title {
+        max-width: none;
+      }
+
+      .builder-subtitle {
+        font-size: 1rem;
+      }
+
+      .builder-section {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .section-head,
+      .card-head,
+      .stack-row,
+      .control-row,
+      .download-wrap {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .field-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .btn,
+      .download-btn {
+        width: 100%;
+      }
+
+      .section-title {
+        font-size: 1.45rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="builder-shell">
+    <header>
+      <div class="hero-head">
+        <span class="hero-badge">Through Vacations Builder</span>
+        <button type="button" id="resetBuilderBtnTop" class="btn btn-ghost btn-reset-top">Reset</button>
+      </div>
+      <h1 class="builder-title">Travel Quotation Builder</h1>
+      <p class="builder-subtitle">Build clean quotation data, organize hotels and itinerary details, and export the final PDF without leaving this page.</p>
+    </header>
+
+    <form id="quotationForm" class="builder-form">
+      <section class="builder-section">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Overview</span>
+            <h2 class="section-title">Trip Details</h2>
+          </div>
+        </div>
+        <div class="field-grid">
+          <label>
+            <span class="field-label">Trip Title</span>
+            <input required name="tripTitle" type="text" placeholder="5N Thailand" />
+          </label>
+          <label>
+            <span class="field-label">Trip Subtitle</span>
+            <input name="tripSubtitle" type="text" placeholder="Trip to Thailand" />
+          </label>
+          <label>
+            <span class="field-label">Travel Date</span>
+            <input required name="travelDate" type="date" />
+          </label>
+          <label>
+            <span class="field-label">Total Net Price</span>
+            <input required name="totalNetPrice" type="text" placeholder="INR 0.00" />
+          </label>
+          <label class="field-span-2">
+            <span class="field-label">Inclusions (one per line)</span>
+            <textarea name="inclusions" rows="4" placeholder="Hotel&#10;Sightseeing&#10;Transfers"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="builder-section">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Travellers</span>
+            <h2 class="section-title">Guests</h2>
+          </div>
+          <button type="button" id="addGuestBtn" class="btn btn-primary">Add Guest</button>
+        </div>
+        <div id="guestsContainer" class="space-y-3"></div>
+      </section>
+
+      <section class="builder-section">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Stay Plan</span>
+            <h2 class="section-title">Hotels</h2>
+          </div>
+          <button type="button" id="addHotelBtn" class="btn btn-primary">Add Hotel</button>
+        </div>
+        <div id="hotelsContainer" class="space-y-4"></div>
+      </section>
+
+      <section class="builder-section">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Experiences</span>
+            <h2 class="section-title">Sightseeing</h2>
+          </div>
+          <button type="button" id="addSightseeingBtn" class="btn btn-primary">Add Sightseeing</button>
+        </div>
+        <div id="sightseeingContainer" class="space-y-3"></div>
+      </section>
+
+      <section class="builder-section">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Daily Plan</span>
+            <h2 class="section-title">Itinerary Days</h2>
+          </div>
+          <button type="button" id="addDayBtn" class="btn btn-primary">Add Day</button>
+        </div>
+        <div id="daysContainer" class="space-y-4"></div>
+      </section>
+
+      <section class="builder-section download-section">
+        <div class="download-wrap">
+          <div class="download-copy">
+            <strong>Ready to export?</strong>
+            Review the sections above, then generate the quotation PDF in one click.
+          </div>
+          <div class="mini-toolbar" style="margin-bottom:0">
+            <button type="button" id="resetBuilderBtn" class="btn btn-secondary">Reset</button>
+            <button type="button" id="openReactPdfBtn" class="btn download-btn">Download PDF</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('quotationForm');
+    const guestsContainer = document.getElementById('guestsContainer');
+    const hotelsContainer = document.getElementById('hotelsContainer');
+    const sightseeingContainer = document.getElementById('sightseeingContainer');
+    const daysContainer = document.getElementById('daysContainer');
+    const resetBuilderBtn = document.getElementById('resetBuilderBtn');
+    const resetBuilderBtnTop = document.getElementById('resetBuilderBtnTop');
+    const REACT_BRIDGE_KEY = 'quotation_builder_data_v1';
+    const BUILDER_DRAFT_KEY = 'quotation_builder_draft_v1';
+    const REACT_DOWNLOAD_FRAME_ID = 'reactPdfDownloadFrame';
+    const STORAGE_DB_NAME = 'quotation_builder_storage';
+    const STORAGE_STORE_NAME = 'documents';
+    const MAX_ACTIVITY_IMAGES = 5;
+    const FIXED_HEADER = {
+      companyName: 'Through Vacations',
+      companyAddress:
+        'No.30, Gangaiamman Koil Street, Abishegapakkam, Puducherry,\nPuducherry - 605007',
+      companyPhone: '918015950987',
+      companyEmail: 'throughvacations@gmail.com',
+      logoDataUrl: '/image/logo.png',
+      pickupIconUrl: '/image/picup.png',
+      dropIconUrl: '/image/drop.png',
+    };
+    const FIXED_VALUES = {
+      inclusionIconsJson: '[]',
+      feedbackPhone: '918015950987',
+      thankYouText: 'Thank You',
+    };
+
+    const createInput = (placeholder, name, type = 'text', required = false) => {
+      const input = document.createElement('input');
+      input.type = type;
+      input.name = name;
+      input.placeholder = placeholder;
+      input.required = required;
+      return input;
+    };
+
+    const createLabel = (labelText, control) => {
+      const label = document.createElement('label');
+      const span = document.createElement('span');
+      span.className = 'field-label';
+      span.textContent = labelText;
+      label.appendChild(span);
+      label.appendChild(control);
+      return label;
+    };
+
+    const readFileAsDataUrl = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Failed to read image file.'));
+        reader.readAsDataURL(file);
+      });
+
+    const loadImageElement = (src) =>
+      new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error('Failed to prepare image for PDF.'));
+        image.src = src;
+      });
+
+    const convertImageToPngDataUrl = async (src) => {
+      const image = await loadImageElement(src);
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth || image.width || 1;
+      canvas.height = image.naturalHeight || image.height || 1;
+      const context = canvas.getContext('2d');
+
+      if (!context) {
+        throw new Error('Unable to process image for PDF.');
+      }
+
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/png');
+    };
+
+    const readFileAsPdfSafeDataUrl = async (file) => {
+      const rawDataUrl = await readFileAsDataUrl(file);
+
+      if (typeof rawDataUrl !== 'string') {
+        throw new Error('Failed to read image file.');
+      }
+
+      if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+        return rawDataUrl;
+      }
+
+      return convertImageToPngDataUrl(rawDataUrl);
+    };
+
+    const createImageField = (name, initialValue = '', options = {}) => {
+      const wrap = document.createElement('div');
+      wrap.className =
+        options.size === 'tiny'
+          ? 'image-field image-field-tiny'
+          : options.compact
+            ? 'image-field image-field-compact'
+            : 'image-field';
+
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = name;
+
+      const previewFrame = document.createElement('div');
+      previewFrame.className = 'image-preview-frame';
+      const previewImage = document.createElement('img');
+      previewImage.className = 'image-preview';
+      previewImage.alt = 'Selected image preview';
+      const previewEmpty = document.createElement('div');
+      previewEmpty.className = 'image-preview-empty';
+      previewEmpty.textContent = 'Choose an image file to preview it here.';
+      previewFrame.appendChild(previewImage);
+      previewFrame.appendChild(previewEmpty);
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.className = 'file-input';
+
+      const uploadButton = document.createElement('button');
+      uploadButton.type = 'button';
+      uploadButton.className = 'btn btn-secondary btn-sm image-upload-btn';
+      uploadButton.textContent = 'Choose File';
+      uploadButton.addEventListener('click', () => fileInput.click());
+
+      const syncValue = (value, options = {}) => {
+        const nextValue = (value || '').trim();
+        hiddenInput.value = nextValue;
+
+        if (nextValue) {
+          previewImage.src = nextValue;
+          previewImage.style.display = 'block';
+          previewEmpty.style.display = 'none';
+        } else {
+          previewImage.removeAttribute('src');
+          previewImage.style.display = 'none';
+          previewEmpty.style.display = 'flex';
+        }
+
+        uploadButton.textContent = nextValue ? 'Change Image' : 'Choose File';
+      };
+
+      fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          alert('Please select a valid image file.');
+          event.target.value = '';
+          return;
+        }
+        try {
+          const dataUrl = await readFileAsPdfSafeDataUrl(file);
+          syncValue(dataUrl, { fromUpload: true });
+          persistBuilderDraft();
+        } catch (error) {
+          alert(error.message || 'Unable to read selected image.');
+        }
+      });
+
+      syncValue(initialValue);
+
+      wrap.appendChild(hiddenInput);
+      wrap.appendChild(previewFrame);
+      wrap.appendChild(uploadButton);
+      wrap.appendChild(fileInput);
+      return wrap;
+    };
+
+    const createRemoveButton = () => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = 'Remove';
+      btn.className = 'btn btn-danger';
+      return btn;
+    };
+
+    const getStorageDb = () =>
+      new Promise((resolve, reject) => {
+        const request = window.indexedDB.open(STORAGE_DB_NAME, 1);
+
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains(STORAGE_STORE_NAME)) {
+            request.result.createObjectStore(STORAGE_STORE_NAME);
+          }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('Unable to open browser storage.'));
+      });
+
+    const setStoredPayload = async (key, value) => {
+      if (!window.indexedDB) {
+        localStorage.setItem(key, JSON.stringify(value));
+        return;
+      }
+
+      const db = await getStorageDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORAGE_STORE_NAME, 'readwrite');
+        tx.objectStore(STORAGE_STORE_NAME).put(value, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error || new Error('Unable to save builder data.'));
+      });
+    };
+
+    const getStoredPayload = async (key) => {
+      if (!window.indexedDB) {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+      }
+
+      const db = await getStorageDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORAGE_STORE_NAME, 'readonly');
+        const request = tx.objectStore(STORAGE_STORE_NAME).get(key);
+        request.onsuccess = () => resolve(request.result ?? null);
+        request.onerror = () => reject(request.error || new Error('Unable to load builder data.'));
+      });
+    };
+
+    const removeStoredPayload = async (key) => {
+      if (!window.indexedDB) {
+        localStorage.removeItem(key);
+        return;
+      }
+
+      const db = await getStorageDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORAGE_STORE_NAME, 'readwrite');
+        tx.objectStore(STORAGE_STORE_NAME).delete(key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error || new Error('Unable to clear builder data.'));
+      });
+    };
+
+    const updateActivityImageSection = (imagesWrap, imagesList) => {
+      const count = imagesList.querySelectorAll('input[name="image"]').length;
+      const addButton = imagesWrap.querySelector('.add-image');
+      const counter = imagesWrap.querySelector('.image-count');
+
+      if (counter) {
+        counter.textContent = `${count}/${MAX_ACTIVITY_IMAGES} images`;
+      }
+
+      if (addButton) {
+        addButton.disabled = count >= MAX_ACTIVITY_IMAGES;
+        addButton.textContent = count >= MAX_ACTIVITY_IMAGES ? 'Limit Reached' : 'Add Image';
+      }
+    };
+
+    function addGuest(name = '') {
+      const row = document.createElement('div');
+      row.className = 'builder-subcard stack-row';
+
+      const input = createInput('Guest name', 'guestName', 'text', true);
+      input.value = name;
+
+      const removeBtn = createRemoveButton();
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        persistBuilderDraft();
+      });
+
+      row.appendChild(input);
+      row.appendChild(removeBtn);
+      guestsContainer.appendChild(row);
+    }
+
+    function addHotel(data = {}) {
+      const card = document.createElement('div');
+      card.className = 'builder-subcard';
+
+      const header = document.createElement('div');
+      header.className = 'card-head';
+      header.innerHTML = '<h3 class="card-title">Hotel</h3>';
+      const removeBtn = createRemoveButton();
+      removeBtn.addEventListener('click', () => {
+        card.remove();
+        persistBuilderDraft();
+      });
+      header.appendChild(removeBtn);
+
+      const grid = document.createElement('div');
+      grid.className = 'field-grid';
+
+      const fields = [
+        ['Hotel Name', 'name', 'text', true],
+        ['City', 'city', 'text', true],
+        ['Check In', 'checkIn', 'date', true],
+        ['Check Out', 'checkOut', 'date', true],
+        ['Rooms / Guests', 'roomsGuests', 'text', true],
+        ['Room Type', 'roomType', 'text', true],
+        ['Meal Type', 'mealType', 'text', true],
+      ];
+
+      fields.forEach(([labelText, name, type, required]) => {
+        const input = createInput(labelText, name, type, required);
+        if (data[name]) input.value = data[name];
+        grid.appendChild(createLabel(labelText, input));
+      });
+
+      const starSelect = document.createElement('select');
+      starSelect.name = 'stars';
+      starSelect.required = true;
+      starSelect.innerHTML = '<option value="">Select</option>' + [1,2,3,4,5].map(s => `<option value="${s}">${s} Star</option>`).join('');
+      starSelect.value = data.stars || '';
+      grid.appendChild(createLabel('Star Rating', starSelect));
+
+      const imageField = createImageField('image', data.image || '', { compact: true });
+      const imageWrap = document.createElement('div');
+      imageWrap.className = 'field-span-2';
+      imageWrap.appendChild(imageField);
+      grid.appendChild(imageWrap);
+
+      card.appendChild(header);
+      card.appendChild(grid);
+      hotelsContainer.appendChild(card);
+    }
+
+    function createModeSelect(name) {
+      const select = document.createElement('select');
+      select.name = name;
+      select.required = true;
+      select.innerHTML = '<option value="PRIVATE">PRIVATE</option><option value="SIC">SIC</option>';
+      return select;
+    }
+
+    function addSightseeing(data = {}) {
+      const row = document.createElement('div');
+      row.className = 'builder-subcard builder-subcard-tight grid md-grid-three gap-3 items-end';
+      const titleInput = createInput('Sightseeing title', 'title', 'text', true);
+      titleInput.value = data.title || '';
+      const modeSelect = createModeSelect('mode');
+      modeSelect.value = data.mode || 'PRIVATE';
+
+      const removeBtn = createRemoveButton();
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        persistBuilderDraft();
+      });
+
+      row.appendChild(createLabel('Title', titleInput));
+      row.appendChild(createLabel('Mode', modeSelect));
+      row.appendChild(removeBtn);
+      sightseeingContainer.appendChild(row);
+    }
+
+    function addTermInput(container, value = '') {
+      const row = document.createElement('div');
+      row.className = 'stack-row';
+      const input = createInput('Term / Condition', 'term', 'text', false);
+      input.value = value;
+      const removeBtn = createRemoveButton();
+      removeBtn.className = 'btn btn-danger btn-sm';
+      removeBtn.addEventListener('click', () => {
+        row.remove();
+        persistBuilderDraft();
+      });
+      row.appendChild(input);
+      row.appendChild(removeBtn);
+      container.appendChild(row);
+    }
+
+    function addActivityImageItem(container, value = '', onChange) {
+      const item = document.createElement('div');
+      item.className = 'image-strip-item';
+      const imageField = createImageField('image', value, { size: 'tiny' });
+      const removeBtn = createRemoveButton();
+      removeBtn.className = 'btn btn-danger btn-sm image-strip-remove';
+      removeBtn.addEventListener('click', () => {
+        item.remove();
+        onChange?.();
+        persistBuilderDraft();
+      });
+      item.appendChild(imageField);
+      item.appendChild(removeBtn);
+      container.appendChild(item);
+    }
+
+    function createEntryCard(type = 'transfer', data = {}) {
+      const card = document.createElement('div');
+      card.className = 'builder-subcard';
+      card.dataset.entryType = type;
+
+      const top = document.createElement('div');
+      top.className = 'card-head';
+
+      const left = document.createElement('div');
+      left.className = 'control-row';
+
+      const typeSelect = document.createElement('select');
+      typeSelect.name = 'entryType';
+      typeSelect.innerHTML = '<option value="transfer">Transfer</option><option value="activity">Activity</option>';
+      typeSelect.value = type;
+
+      const modeSelect = createModeSelect('mode');
+      modeSelect.classList.add('md-max-w-140');
+      modeSelect.value = data.mode || 'PRIVATE';
+
+      left.appendChild(typeSelect);
+      left.appendChild(modeSelect);
+
+      const removeBtn = createRemoveButton();
+      removeBtn.addEventListener('click', () => {
+        card.remove();
+        persistBuilderDraft();
+      });
+
+      top.appendChild(left);
+      top.appendChild(removeBtn);
+
+      const fieldsArea = document.createElement('div');
+      fieldsArea.className = 'space-y-3';
+
+      function renderFields(entryType) {
+        card.dataset.entryType = entryType;
+        fieldsArea.innerHTML = '';
+
+        const titleInput = createInput('Entry title', 'title', 'text', true);
+        titleInput.value = data.title || '';
+        fieldsArea.appendChild(createLabel('Title', titleInput));
+
+        if (entryType === 'transfer') {
+          const grid = document.createElement('div');
+          grid.className = 'field-grid';
+          const pickup = createInput('Pickup point', 'pickup', 'text', true);
+          pickup.value = data.pickup || '';
+          const drop = createInput('Drop point', 'drop', 'text', true);
+          drop.value = data.drop || '';
+          const route = createInput('Route details', 'route', 'text', true);
+          route.value = data.route || '';
+
+          grid.appendChild(createLabel('Pickup', pickup));
+          grid.appendChild(createLabel('Drop', drop));
+          const routeWrap = createLabel('Route', route);
+          routeWrap.className = 'field-span-2';
+          grid.appendChild(routeWrap);
+          fieldsArea.appendChild(grid);
+        } else {
+          const desc = document.createElement('textarea');
+          desc.name = 'description';
+          desc.rows = 3;
+          desc.required = true;
+          desc.value = data.description || '';
+          fieldsArea.appendChild(createLabel('Description', desc));
+
+          const termsWrap = document.createElement('div');
+          termsWrap.className = 'space-y-2';
+          termsWrap.innerHTML = '<div class="card-head"><span class="field-label" style="margin-bottom:0">Terms (bullets)</span><button type="button" class="add-term btn btn-secondary btn-sm">Add Term</button></div>';
+          const termsList = document.createElement('div');
+          termsList.className = 'space-y-2';
+          termsList.dataset.listType = 'terms';
+          (Array.isArray(data.terms) && data.terms.length ? data.terms : ['']).forEach(t => addTermInput(termsList, t));
+          termsWrap.appendChild(termsList);
+          termsWrap.querySelector('.add-term').addEventListener('click', () => {
+            addTermInput(termsList);
+            persistBuilderDraft();
+          });
+          fieldsArea.appendChild(termsWrap);
+
+          const imagesWrap = document.createElement('div');
+          imagesWrap.className = 'space-y-2';
+          imagesWrap.innerHTML = '<div class="card-head"><div><span class="field-label" style="margin-bottom:0">Images</span><div class="field-meta image-count">0/5 images</div></div><button type="button" class="add-image btn btn-secondary btn-sm">Add Image</button></div>';
+          const imagesList = document.createElement('div');
+          imagesList.className = 'image-strip';
+          imagesList.dataset.listType = 'images';
+          const imagePicker = document.createElement('input');
+          imagePicker.type = 'file';
+          imagePicker.accept = 'image/*';
+          imagePicker.multiple = true;
+          imagePicker.style.display = 'none';
+          const syncImagesSection = () => updateActivityImageSection(imagesWrap, imagesList);
+          (Array.isArray(data.images) && data.images.length ? data.images : [''])
+            .slice(0, MAX_ACTIVITY_IMAGES)
+            .forEach(i => addActivityImageItem(imagesList, i, syncImagesSection));
+          imagesWrap.appendChild(imagesList);
+          imagesWrap.appendChild(imagePicker);
+          imagesWrap.querySelector('.add-image').addEventListener('click', () => {
+            if (imagesList.querySelectorAll('input[name="image"]').length >= MAX_ACTIVITY_IMAGES) {
+              syncImagesSection();
+              return;
+            }
+            imagePicker.click();
+          });
+          imagePicker.addEventListener('change', async (event) => {
+            const files = Array.from(event.target.files || []);
+            if (!files.length) return;
+
+            const currentCount = imagesList.querySelectorAll('input[name="image"]').length;
+            const remainingSlots = Math.max(0, MAX_ACTIVITY_IMAGES - currentCount);
+            const selectedFiles = files.slice(0, remainingSlots);
+
+            try {
+              const images = await Promise.all(selectedFiles.map((file) => {
+                if (!file.type.startsWith('image/')) {
+                  throw new Error('Please select only image files.');
+                }
+                return readFileAsPdfSafeDataUrl(file);
+              }));
+
+              images.forEach((src) => addActivityImageItem(imagesList, src, syncImagesSection));
+              syncImagesSection();
+              persistBuilderDraft();
+            } catch (error) {
+              alert(error.message || 'Unable to read selected image.');
+            } finally {
+              event.target.value = '';
+            }
+          });
+          syncImagesSection();
+          fieldsArea.appendChild(imagesWrap);
+        }
+      }
+
+      typeSelect.addEventListener('change', () => {
+        renderFields(typeSelect.value);
+        persistBuilderDraft();
+      });
+      renderFields(type);
+
+      card.appendChild(top);
+      card.appendChild(fieldsArea);
+      return card;
+    }
+
+    function addDay(data = {}) {
+      const card = document.createElement('div');
+      card.className = 'builder-subcard';
+
+      const top = document.createElement('div');
+      top.className = 'card-head';
+
+      const dayLabelInput = createInput('Day 1 : Monday, February 9th, 2026', 'dayLabel', 'text', true);
+      dayLabelInput.value = data.dayLabel || '';
+      const dayLabelWrap = createLabel('Day Label', dayLabelInput);
+      dayLabelWrap.style.flex = '1 1 auto';
+
+      const removeBtn = createRemoveButton();
+      removeBtn.addEventListener('click', () => {
+        card.remove();
+        persistBuilderDraft();
+      });
+
+      top.appendChild(dayLabelWrap);
+      top.appendChild(removeBtn);
+
+      const actionBar = document.createElement('div');
+      actionBar.className = 'mini-toolbar';
+      actionBar.innerHTML = `
+        <button type="button" class="add-transfer btn btn-secondary">Add Transfer</button>
+        <button type="button" class="add-activity btn btn-primary">Add Activity</button>
+      `;
+
+      const entriesContainer = document.createElement('div');
+      entriesContainer.className = 'space-y-3';
+
+      actionBar.querySelector('.add-transfer').addEventListener('click', () => {
+        entriesContainer.appendChild(createEntryCard('transfer'));
+        persistBuilderDraft();
+      });
+      actionBar.querySelector('.add-activity').addEventListener('click', () => {
+        entriesContainer.appendChild(createEntryCard('activity'));
+        persistBuilderDraft();
+      });
+
+      if (Array.isArray(data.entries) && data.entries.length) {
+        data.entries.forEach(entry => {
+          entriesContainer.appendChild(createEntryCard(entry.type, entry));
+        });
+      }
+
+      card.appendChild(top);
+      card.appendChild(actionBar);
+      card.appendChild(entriesContainer);
+      daysContainer.appendChild(card);
+    }
+
+    function collectData() {
+      const formData = new FormData(form);
+
+      const guests = Array.from(guestsContainer.querySelectorAll('input[name="guestName"]'))
+        .map(i => i.value.trim())
+        .filter(Boolean);
+
+      const hotels = Array.from(hotelsContainer.children).map(card => ({
+        name: card.querySelector('input[name="name"]')?.value.trim() || '',
+        city: card.querySelector('input[name="city"]')?.value.trim() || '',
+        checkIn: card.querySelector('input[name="checkIn"]')?.value || '',
+        checkOut: card.querySelector('input[name="checkOut"]')?.value || '',
+        roomsGuests: card.querySelector('input[name="roomsGuests"]')?.value.trim() || '',
+        roomType: card.querySelector('input[name="roomType"]')?.value.trim() || '',
+        mealType: card.querySelector('input[name="mealType"]')?.value.trim() || '',
+        stars: Number(card.querySelector('select[name="stars"]')?.value || 0),
+        image: card.querySelector('input[name="image"]')?.value.trim() || undefined,
+      })).filter(h => h.name);
+
+      const sightseeing = Array.from(sightseeingContainer.children).map(row => ({
+        title: row.querySelector('input[name="title"]')?.value.trim() || '',
+        mode: row.querySelector('select[name="mode"]')?.value || 'PRIVATE',
+      })).filter(s => s.title);
+
+      const itinerary = Array.from(daysContainer.children).map(dayCard => {
+        const dayLabel = dayCard.querySelector('input[name="dayLabel"]')?.value.trim() || '';
+        const entries = Array.from(dayCard.querySelectorAll('[data-entry-type]')).map(entryCard => {
+          const type = entryCard.dataset.entryType;
+          const mode = entryCard.querySelector('select[name="mode"]')?.value || 'PRIVATE';
+          const title = entryCard.querySelector('input[name="title"]')?.value.trim() || '';
+
+          if (type === 'transfer') {
+            return {
+              type: 'transfer',
+              title,
+              mode,
+              pickup: entryCard.querySelector('input[name="pickup"]')?.value.trim() || '',
+              drop: entryCard.querySelector('input[name="drop"]')?.value.trim() || '',
+              route: entryCard.querySelector('input[name="route"]')?.value.trim() || '',
+            };
+          }
+
+          const terms = Array.from(entryCard.querySelectorAll('[data-list-type="terms"] input[name="term"]'))
+            .map(i => i.value.trim())
+            .filter(Boolean);
+
+          const images = Array.from(entryCard.querySelectorAll('[data-list-type="images"] input[name="image"]'))
+            .map(i => i.value.trim())
+            .filter(Boolean);
+
+          const activity = {
+            type: 'activity',
+            title,
+            mode,
+            description: entryCard.querySelector('textarea[name="description"]')?.value.trim() || '',
+          };
+
+          if (terms.length) activity.terms = terms;
+          if (images.length) activity.images = images.slice(0, MAX_ACTIVITY_IMAGES);
+          return activity;
+        }).filter(e => e.title);
+
+        return { dayLabel, entries };
+      }).filter(d => d.dayLabel);
+
+      return {
+        companyName: FIXED_HEADER.companyName,
+        companyAddress: FIXED_HEADER.companyAddress,
+        companyPhone: FIXED_HEADER.companyPhone,
+        companyEmail: FIXED_HEADER.companyEmail,
+        logoDataUrl: FIXED_HEADER.logoDataUrl,
+        pickupIconUrl: FIXED_HEADER.pickupIconUrl,
+        dropIconUrl: FIXED_HEADER.dropIconUrl,
+        inclusionIconsJson: FIXED_VALUES.inclusionIconsJson,
+        tripTitle: formData.get('tripTitle')?.toString().trim() || '',
+        tripSubtitle: formData.get('tripSubtitle')?.toString().trim() || '',
+        travelDate: formData.get('travelDate')?.toString().trim() || '',
+        totalNetPrice: formData.get('totalNetPrice')?.toString().trim() || '',
+        inclusions: formData.get('inclusions')?.toString().trim() || '',
+        guests: guests.join('\n'),
+        hotelsJson: JSON.stringify(hotels, null, 2),
+        sightseeingJson: JSON.stringify(sightseeing, null, 2),
+        itineraryJson: JSON.stringify(itinerary, null, 2),
+        feedbackPhone: FIXED_VALUES.feedbackPhone,
+        thankYouText: FIXED_VALUES.thankYouText,
+      };
+    }
+
+    async function persistBuilderDraft() {
+      try {
+        await setStoredPayload(BUILDER_DRAFT_KEY, collectData());
+        localStorage.removeItem(BUILDER_DRAFT_KEY);
+      } catch (error) {
+        console.error('Unable to persist builder draft.', error);
+      }
+    }
+
+    function clearContainer(container) {
+      container.innerHTML = '';
+    }
+
+    function setTopLevelField(name, value = '') {
+      const field = form.querySelector(`[name="${name}"]`);
+      if (field) {
+        field.value = value;
+      }
+    }
+
+    function hydrateBuilder(data) {
+      setTopLevelField('tripTitle', data.tripTitle || '');
+      setTopLevelField('tripSubtitle', data.tripSubtitle || '');
+      setTopLevelField('travelDate', data.travelDate || '');
+      setTopLevelField('totalNetPrice', data.totalNetPrice || '');
+      setTopLevelField('inclusions', data.inclusions || '');
+
+      clearContainer(guestsContainer);
+      clearContainer(hotelsContainer);
+      clearContainer(sightseeingContainer);
+      clearContainer(daysContainer);
+
+      const guests = (data.guests || '')
+        .split('\n')
+        .map((guest) => guest.trim())
+        .filter(Boolean);
+
+      const safeParse = (value, fallback) => {
+        try {
+          return JSON.parse(value || '');
+        } catch {
+          return fallback;
+        }
+      };
+
+      const hotels = safeParse(data.hotelsJson, []);
+      const sightseeing = safeParse(data.sightseeingJson, []);
+      const itinerary = safeParse(data.itineraryJson, []);
+
+      if (guests.length) {
+        guests.forEach((guest) => addGuest(guest));
+      } else {
+        addGuest();
+      }
+
+      if (hotels.length) {
+        hotels.forEach((hotel) => addHotel(hotel));
+      } else {
+        addHotel();
+      }
+
+      if (sightseeing.length) {
+        sightseeing.forEach((item) => addSightseeing(item));
+      } else {
+        addSightseeing();
+      }
+
+      if (itinerary.length) {
+        itinerary.forEach((day) => addDay(day));
+      } else {
+        addDay();
+      }
+    }
+
+    async function loadBuilderDraft() {
+      try {
+        const stored = await getStoredPayload(BUILDER_DRAFT_KEY);
+        if (!stored) {
+          hydrateBuilder({});
+          return;
+        }
+
+        hydrateBuilder(stored);
+        localStorage.removeItem(BUILDER_DRAFT_KEY);
+      } catch {
+        hydrateBuilder({});
+      }
+    }
+
+    async function resetBuilder() {
+      await removeStoredPayload(BUILDER_DRAFT_KEY);
+      await removeStoredPayload(REACT_BRIDGE_KEY);
+      localStorage.removeItem(BUILDER_DRAFT_KEY);
+      localStorage.removeItem(REACT_BRIDGE_KEY);
+      cleanupReactDownloadFrame();
+      hydrateBuilder({});
+    }
+
+    async function saveDataForReactApp(data) {
+      await setStoredPayload(REACT_BRIDGE_KEY, data);
+      localStorage.removeItem(REACT_BRIDGE_KEY);
+    }
+
+    function cleanupReactDownloadFrame() {
+      document.getElementById(REACT_DOWNLOAD_FRAME_ID)?.remove();
+    }
+
+    document.getElementById('addGuestBtn').addEventListener('click', () => {
+      addGuest();
+      persistBuilderDraft();
+    });
+    document.getElementById('addHotelBtn').addEventListener('click', () => {
+      addHotel();
+      persistBuilderDraft();
+    });
+    document.getElementById('addSightseeingBtn').addEventListener('click', () => {
+      addSightseeing();
+      persistBuilderDraft();
+    });
+    document.getElementById('addDayBtn').addEventListener('click', () => {
+      addDay();
+      persistBuilderDraft();
+    });
+    resetBuilderBtn.addEventListener('click', () => { void resetBuilder(); });
+    resetBuilderBtnTop.addEventListener('click', () => { void resetBuilder(); });
+    document.getElementById('openReactPdfBtn').addEventListener('click', async () => {
+      try {
+        const data = collectData();
+        await persistBuilderDraft();
+        await saveDataForReactApp(data);
+        cleanupReactDownloadFrame();
+
+        const iframe = document.createElement('iframe');
+        iframe.id = REACT_DOWNLOAD_FRAME_ID;
+        iframe.src = '/?fromBuilder=1&autoDownload=1';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        window.setTimeout(cleanupReactDownloadFrame, 60000);
+      } catch (error) {
+        alert(error.message || 'Unable to open React PDF.');
+      }
+    });
+
+    form.addEventListener('input', () => {
+      persistBuilderDraft();
+    });
+
+    form.addEventListener('change', () => {
+      persistBuilderDraft();
+    });
+
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === 'quotation-pdf-download-complete') {
+        cleanupReactDownloadFrame();
+      }
+    });
+
+    void loadBuilderDraft();
+  </script>
+</body>
+</html>
